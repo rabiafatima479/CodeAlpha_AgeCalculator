@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <h1>Glassmorphic Age Calculator</h1>
+        <p class="description">Enter your date of birth to calculate your exact age in years, months, and days.</p>
+        
+        <div class="input-group">
+            <label for="birthdate">Select your birthdate:</label>
+            <input type="date" id="birthdate">
+        </div>
+        
+        <button id="calculate-btn">Calculate My Age</button>
+        
+        <div class="result" id="result">
+            <h2>Your Age Is</h2>
+            <div class="age-result">
+                <div class="time-unit">
+                    <div class="time-value" id="years">0</div>
+                    <div class="time-label">Years</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="months">0</div>
+                    <div class="time-label">Months</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="days">0</div>
+                    <div class="time-label">Days</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Made by Syeda Rabia Fatima💗</p>
+        </footer>
+    </div>
+
+  
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // Initialize particles.js
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                particles: {
+                    number: {
+                        value: 80,
+                        density: {
+                            enable: true,
+                            value_area: 800
+                        }
+                    },
+                    color: {
+                        value: "#ffffff"
+                    },
+                    shape: {
+                        type: "circle",
+                        stroke: {
+                            width: 0,
+                            color: "#000000"
+                        }
+                    },
+                    opacity: {
+                        value: 0.5,
+                        random: true,
+                        anim: {
+                            enable: true,
+                            speed: 1,
+                            opacity_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    size: {
+                        value: 3,
+                        random: true,
+                        anim: {
+                            enable: true,
+                            speed: 2,
+                            size_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#ffffff",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false,
+                        attract: {
+                            enable: false,
+                            rotateX: 600,
+                            rotateY: 1200
+                        }
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: "grab"
+                        },
+                        onclick: {
+                            enable: true,
+                            mode: "push"
+                        },
+                        resize: true
+                    },
+                    modes: {
+                        grab: {
+                            distance: 140,
+                            line_linked: {
+                                opacity: 1
+                            }
+                        },
+                        push: {
+                            particles_nb: 4
+                        }
+                    }
+                },
+                retina_detect: true
+            });
+            
+            // Age calculator functionality....
+            const calculateBtn = document.getElementById('calculate-btn');
+            const birthdateInput = document.getElementById('birthdate');
+            const resultDiv = document.getElementById('result');
+            const yearsElement = document.getElementById('years');
+            const monthsElement = document.getElementById('months');
+            const daysElement = document.getElementById('days');
+            
+            // Set maximum date to today.....
+            const today = new Date();
+            const maxDate = today.toISOString().split('T')[0];
+            birthdateInput.setAttribute('max', maxDate);
+            
+            calculateBtn.addEventListener('click', function() {
+                const birthdate = new Date(birthdateInput.value);
+                
+                if (!birthdateInput.value) {
+                    alert('Please select your birthdate first!');
+                    return;
+                }
+                
+                // Calculate age....
+                const ageDetails = calculateAge(birthdate);
+                
+                // Update the UI with Animation....
+                animateValue(yearsElement, 0, ageDetails.years, 1000);
+                animateValue(monthsElement, 0, ageDetails.months, 1000);
+                animateValue(daysElement, 0, ageDetails.days, 1000);
+                
+                // Show result.....
+                resultDiv.classList.add('active');
+            });
+            
+            function calculateAge(birthdate) {
+                const today = new Date();
+                
+                let years = today.getFullYear() - birthdate.getFullYear();
+                let months = today.getMonth() - birthdate.getMonth();
+                let days = today.getDate() - birthdate.getDate();
+                
+               
+                if (days < 0) {
+                    months--;
+                  
+                    const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                    days += lastMonth.getDate();
+                }
+                
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+                
+                return { years, months, days };
+            }
+            
+            function animateValue(element, start, end, duration) {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    const value = Math.floor(progress * (end - start) + start);
+                    element.textContent = value;
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+        });
+    </script>
+</body>
+</html>
